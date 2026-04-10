@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# merge, squash, amend 등 자동 생성 커밋에는 템플릿 적용 안 함
+[ -n "$2" ] && exit 0
+
+BRANCH=$(git branch --show-current)
+
+# feat/OAuth/13/yj → COMMIT_TYPE=feat, BRANCH_NAME=OAuth, ISSUE_NUMBER=13
+COMMIT_TYPE=$(echo "$BRANCH" | cut -d'/' -f1)
+BRANCH_NAME=$(echo "$BRANCH" | cut -d'/' -f2)
+ISSUE_NUMBER=$(echo "$BRANCH" | cut -d'/' -f3)
+
+# 브랜치 형식이 맞지 않으면 종료 (main, develop 등)
+# type/name/number 형태 (슬래시 2개 이상) 여야 함
+case "$BRANCH" in
+  */*/*) ;;
+  *) exit 0 ;;
+esac
+
+cat > "$1" <<EOF
+[$BRANCH_NAME] $COMMIT_TYPE:
+
+-
+
+# $ISSUE_NUMBER
+EOF

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+BRANCH=$(git branch --show-current)
+
+# main, develop 브랜치는 commitlint 검증 생략
+case "$BRANCH" in
+  main|develop) exit 0 ;;
+esac
+
+yarn commitlint --edit "$1"
